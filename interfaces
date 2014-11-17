@@ -1,0 +1,54 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# Bare network interface - using 8021q tagging
+auto em1
+iface em1 inet manual
+        pre-up ifconfig $IFACE up promisc
+        post-down ifconfig $IFACE down
+
+# vlan 1 - main services for local network
+# vlan 1 is bridged to br-ex to provide external connectivity
+auto em1.1
+iface em1.1 inet manual
+        pre-up ifconfig $IFACE up
+        post-down ifconfig $IFACE down
+
+# Openstack 'external' bridge
+auto br-ex
+iface br-ex inet static
+        pre-up ifconfig $IFACE up
+        post-down ifconfig $IFACE down
+        address 192.168.1.10
+        netmask 255.255.255.0
+        network 192.168.1.0
+        broadcast 192.168.1.255
+        gateway 192.168.1.1
+        dns-nameservers 8.8.8.8 4.4.4.4
+        
+
+
+# vlan 2 is reserved for the network containing compute nodes
+#  This includes all OpenStack service endpoints and iSCSI terminations
+auto em1.2
+iface em1.2 inet static
+        pre-up ifconfig $IFACE up
+        post-down ifconfig $IFACE down
+        address 192.168.200.1
+        netmask 255.255.255.0
+        network 192.168.200.0
+        broadcast 192.168.200.255
+
+
+# Openstack 'backend' tenant bridge. Tenant networks will use VLANs on this bridge
+#  em1 (the physical interface) should be bridged here
+auto br-backend
+iface br-backend inet manual
+        pre-up ifconfig $IFACE up
+        post-down ifconfig $IFACE down
+ 
+
