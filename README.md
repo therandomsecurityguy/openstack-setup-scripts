@@ -12,7 +12,7 @@ These are some basic scripts that are used to:
  
 ### Files included:
 
- * Interfaces
+ * interfaces
  * setup_controller.sh
  * setup_compute.sh
  * setup_dashboard.sh
